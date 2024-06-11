@@ -18,9 +18,6 @@ local plugins = {
     "hedyhli/outline.nvim", -- unfinished config
     lazy = true,
     cmd = { "Outline", "OutlineOpen" },
-    keys = { -- Example mapping to toggle outline
-      { "<leader>o", "<cmd>Outline<CR>", desc = "Toggle outline" },
-    },
     opts = {
       -- Your setup opts here
       auto_jump= true,
@@ -48,7 +45,7 @@ local plugins = {
     'lewis6991/gitsigns.nvim',
     opts = {
       -- See `:help gitsigns.txt`
-      numhl = true,
+      numhl = false,
       signcolumn = false,
     },
   },
@@ -142,12 +139,17 @@ local plugins = {
     dependencies = { "nvim-tree/nvim-web-devicons" },
   },
   'chentoast/marks.nvim',
+  'edluffy/hologram.nvim',
 }
 
 
 local opts = {}
 
 require("lazy").setup(plugins, opts)
+
+require('hologram').setup{
+    auto_display = true -- WIP automatic markdown image display, may be prone to breaking
+}
 
 -- require("plugins.telescope")
 require("plugins.mason")

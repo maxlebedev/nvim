@@ -54,7 +54,6 @@ vim.cmd.highlight({"Search", "guibg=DimGrey", "guifg=NONE"})
 -- vim.cmd.highlight({"DiagnosticSignWarn", "guibg=NONE", "guifg=#61afef"})
 --vim.highlight.create('DiagnosticSignWarn', { ctermbg=0, guifg='#61afef', guibg='#31353f' }, false)
 
-
 vim.diagnostic.config({
   virtual_text = false,
   float = true,
@@ -65,15 +64,28 @@ vim.diagnostic.config({
       [vim.diagnostic.severity.WARN] = " ",
       [vim.diagnostic.severity.INFO] = " ",
       [vim.diagnostic.severity.HINT] = " ",
+    },
+    numhl = {
+      [vim.diagnostic.severity.ERROR] = "DiagnosticError",
+      [vim.diagnostic.severity.WARN] = "DiagnosticWarn",
+      [vim.diagnostic.severity.INFO] = "DiagnosticInfo",
+      [vim.diagnostic.severity.HINT] = "DiagnosticHint",
     }
   }
 })
 vim.opt.signcolumn = "number"
+-- vim.cmd.highlight({"DiagnosticError", "cterm=bold", "gui=bold", "guifg=#2a2d25", "guibg=#f18e91"})
+-- vim.cmd.highlight({"DiagnosticWarn", "cterm=bold", "gui=bold", "guifg=#2a2d25", "guibg=Orange"})
 -- DagnosticSignError for highlighted bg, no "sign" for no bg
-vim.fn.sign_define("DiagnosticSignError", { texthl = "DiagnosticError", text = " "})
-vim.fn.sign_define("DiagnosticSignWarn", { texthl = "DiagnosticWarn", text = " "})
-vim.fn.sign_define("DiagnosticSignHint", { texthl = "DiagnosticHint", text = " "})
-vim.fn.sign_define("DiagnosticSignInfo", { texthl = "DiagnosticInfo", text = " "})
+vim.fn.sign_define("DiagnosticSignError", { numhl = "DiagnosticError"})
+vim.fn.sign_define("DiagnosticSignWarn", { numhl = "DiagnosticWarn"})
+vim.fn.sign_define("DiagnosticSignHint", { numhl = "DiagnosticHint"})
+vim.fn.sign_define("DiagnosticSignInfo", { numhl = "DiagnosticInfo"})
+
+
+-- TODO: error/warn info can be conveyed via color alone
+-- git bg too, but they gotta look different. Maybe erros get bg and git gets fg?
+-- using red/yellow/green in both cases kinda samey. maybe turn off gitsigns?
 
 vim.api.nvim_command('au FocusGained,BufEnter * :checktime')
 local function system(command)

@@ -62,8 +62,13 @@ vim.keymap.set('n', '<leader>w', WinSwap(), {desc="WinSwap"})
 
 vim.keymap.set('v', "<leader>d", [[:s/\(\w\+\)\.\(\w\+\)/\1["\2"]/g]], {desc='foo.bar to foo["bar"]'})
 vim.keymap.set('v', "<leader>a", [[:s/\(\w\+\)\["\(\w\+\)"]/\1.\2/g]], {desc='foo.bar to foo.bar'})
+
 vim.keymap.set('v', "<leader>:", [[:s/\(\w\+\)=/"\1": /g]], {desc='a=b to "a":b'})
-vim.keymap.set('v', "<leader>=", [[:s/"\(\w\+\)": \?/\1=]], {desc='"a": b to a=b'})
+vim.keymap.set('v', "<leader>=", [[:s/"\(\w\+\)": \?/\1=/g]], {desc='"a": b to a=b'})
 
--- '<,'>: -- 
+vim.keymap.set('v', "<leader>c", [[:s/_\([a-z]\)/\U\1/g]], {desc='snake_case to camelCase'})
+vim.keymap.set('v', "<leader>s", [[:s/\([A-Z]\)/_\l\1/g]], {desc='camelCase to snake_case'})
+-- there is also title-case?
 
+
+vim.keymap.set('n', "<leader>o", "<cmd>Outline<CR>", {desc="Toggle outline"})
