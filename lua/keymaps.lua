@@ -19,13 +19,16 @@ vim.keymap.set('n', '<S-Right>', '<c-w>L')
 vim.keymap.set('n', '<leader>j', 'gT')
 vim.keymap.set('n', '<leader>;', 'gt')
 
+vim.keymap.set('i', '<S-Tab>', '<C-d>') -- untabs in insert mode
+
+vim.keymap.set('v', '<S-Tab>', '<gv')
+vim.keymap.set('v', '<Tab>', '>gv') -- >> with tab in vmode
+
 vim.keymap.set('n', 'U', '<Cmd>redo<Cr>')
 
-vim.keymap.set('n', 'gD', 'sp | norm gd<Cr>')
+-- vim.keymap.set('n', '<leader><BS>', '<C-o>', {desc="Return from a move"})
+-- C-i and C-o navigate the split buffer stack
 
-vim.keymap.set('n', '<leader><BS>', '<C-o>', {desc="Return from a move"})
-
--- tnoremap <ESC> <C-\><C-n>
 vim.keymap.set('t', '<ESC>', '<C-\\><C-n>')
 
 -- is this a different goto def than the builtin?
@@ -39,6 +42,8 @@ vim.keymap.set('n', 'gF', '<C-w><C-f>', {desc="[G]oto [F]ile in split"})
 vim.keymap.set('n', 'gb', ':Git blame<Cr>', {desc="[G]it [b]lame"})
 -- probably should live in pluins/undotree
 vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle, {desc="Undotree toggle"})
+
+vim.keymap.set('n', '<leader>t', ':ToggleTerm<CR>')
 
 WinSwap = function()
   local swap_buf = -1 --assuming buf/win numbers are nonnegative
@@ -70,5 +75,7 @@ vim.keymap.set('v', "<leader>c", [[:s/_\([a-z]\)/\U\1/g]], {desc='snake_case to 
 vim.keymap.set('v', "<leader>s", [[:s/\([A-Z]\)/_\l\1/g]], {desc='camelCase to snake_case'})
 -- there is also title-case?
 
+
+vim.keymap.set('n', "<leader>dbg", [[iprint(f"{=}")<ESC>3hi]], {desc='debug print'})
 
 vim.keymap.set('n', "<leader>o", "<cmd>Outline<CR>", {desc="Toggle outline"})

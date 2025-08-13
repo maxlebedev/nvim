@@ -8,6 +8,10 @@ vim.opt.laststatus = 2
 vim.opt.autowrite = true
 vim.opt.autoread = true
 
+vim.opt.lazyredraw = true
+vim.o.ttyfast = true
+vim.o.synmaxcol = 300
+
 -- use spaces for tabs and whatnot (does this work with python?)
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
@@ -98,3 +102,5 @@ end
 if vim.fn.executable("python3") > 0 then
   vim.g.python3_host_prog = system("which python3")
 end
+
+vim.g.undotree_SetFocusWhenToggle = 1

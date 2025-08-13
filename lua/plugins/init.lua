@@ -49,12 +49,9 @@ local plugins = {
       signcolumn = false,
     },
   },
-  {
-    'projekt0n/caret.nvim', config = function() vim.cmd.colorscheme 'caret' end, },
-  -- 'savq/melange-nvim', config = function() vim.cmd.colorscheme 'melange' end, },
-  -- { 'jacoborus/tender.vim', config = function() vim.cmd.colorscheme 'tender' end, },
-  -- { 'ellisonleao/gruvbox.nvim', config = function() vim.cmd.colorscheme 'gruvbox' end },
-  -- { 'bluz71/vim-moonfly-colors', config = function() vim.cmd.colorscheme 'moonfly' end, },
+  -- {'projekt0n/caret.nvim', config = function() vim.cmd.colorscheme 'caret' end, },
+  {'nyoom-engineering/oxocarbon.nvim', config = function() vim.cmd.colorscheme 'oxocarbon' end, },
+
 
   { -- Add indentation guides even on blank lines
     'lukas-reineke/indent-blankline.nvim',
@@ -123,7 +120,7 @@ local plugins = {
     'hrsh7th/nvim-cmp',
     dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
   },
-  { 'folke/which-key.nvim', opts = {} },
+  { 'folke/which-key.nvim', opts = { preset = "classic", } },
   {
     'vidocqh/data-viewer.nvim',
     opts = {},
@@ -137,36 +134,21 @@ local plugins = {
     opts = {},
     -- Optional dependencies
     dependencies = { "nvim-tree/nvim-web-devicons" },
-  },
-  'chentoast/marks.nvim',
-  'edluffy/hologram.nvim',
-
-  -- Not sure if these are useful these yet
-  {
-    'ldelossa/litee.nvim',
-    event = "VeryLazy",
-    opts = {
-      notify = { enabled = false },
-      panel = {
-        orientation = "bottom",
-        panel_size = 10,
-      },
-    },
-    config = function(_, opts) require('litee.lib').setup(opts) end
+    -- font: FiraCodeNerfFontMono-Regular
+    lazy = false,
   },
 
-  {
-    'ldelossa/litee-calltree.nvim',
-    dependencies = 'ldelossa/litee.nvim',
-    event = "VeryLazy",
-    opts = {
-      on_open = "panel",
-      map_resize_keys = false,
-    },
-    config = function(_, opts) require('litee.calltree').setup(opts) end
-  },
-  -- :lua vim.lsp.buf.incoming_calls()
-  -- :lua vim.lsp.buf.outgoing_calls()
+  'chentoast/marks.nvim', -- dmx to delete mark x, support bookmarks with virt text
+  -- off, for invalid buffer errors
+  -- 'edluffy/hologram.nvim',
+  'lucasdf/hologram.nvim',
+
+  { 'echasnovski/mini.surround', version = false },
+  'bullets-vim/bullets.vim',
+
+  -- { "folke/edgy.nvim", event = "VeryLazy", opts = {} },
+  "akinsho/toggleterm.nvim",
+  "Wilfred/difftastic",
 }
 
 
@@ -175,8 +157,14 @@ local opts = {}
 require("lazy").setup(plugins, opts)
 
 require('hologram').setup{
-    auto_display = true -- WIP automatic markdown image display, may be prone to breaking
+    -- auto_display = true -- WIP automatic markdown image display, may be prone to breaking
 }
+require('mini.surround').setup({
+-- saiw - surround add inside word
+})
+require('oil').setup({
+  default_file_explorer = true,
+})
 
 -- require("plugins.telescope")
 require("plugins.mason")
@@ -191,3 +179,10 @@ require("plugins.marks")
 -- require("plugins.sniprun")
 -- require("plugins.undotree")
 -- require("plugins.iron")
+require("toggleterm").setup{
+  open_mapping = [[<C-n>]],
+  hide_numbers = true,
+  -- direction = "vertical",
+  direction = "float",
+  size = vim.o.columns * 0.3,
+}
