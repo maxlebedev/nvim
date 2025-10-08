@@ -1,29 +1,28 @@
 require('lualine').setup {
     options = {
-      icons_enabled = false,
+      icons_enabled = true,
       theme = 'onedark',
-      -- component_separators = '|',
       component_separators = { left = '', right = '' },
-      section_separators = '',
-      globalstatus = false
+      section_separators = { left = '', right = ''},
+      globalstatus = true,
     },
   sections = {
+    lualine_a = { 'mode' },
+    lualine_b = {'branch', 'diff', 'diagnostics'},
     lualine_c = {
       {
         'filename',
-        file_status = true, -- displays file status (readonly status, modified status)
-        path = 2 -- 0 = just filename, 1 = relative path, 2 = absolute path
+        file_status = true,
+        path = 3
       }
-    }
+    },
+    lualine_x = {'lsp_status'},
+    lualine_y = {'filetype', 'location'},
+    lualine_z = {
+      {
+        'tabs',
+        show_modified_status = false
+      }
+    },
   },
-  inactive_sections = {
-    lualine_c = {
-      {
-        'filename',
-        file_status = true, -- displays file status (readonly status, modified status)
-        path = 4 -- 0 = just filename, 1 = relative path, 2 = absolute path
-      }
-    }
-  }
 }
-

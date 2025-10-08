@@ -13,10 +13,10 @@ vim.o.ttyfast = true
 vim.o.synmaxcol = 300
 
 -- use spaces for tabs and whatnot (does this work with python?)
-vim.opt.tabstop = 2
-vim.opt.shiftwidth = 2
-vim.opt.shiftround = true
-vim.opt.expandtab = true
+-- vim.opt.tabstop = 2
+-- vim.opt.shiftwidth = 2
+-- vim.opt.shiftround = true
+-- vim.opt.expandtab = true
 
 vim.o.swapfile = false
 vim.o.wildmenu = true
@@ -104,3 +104,16 @@ if vim.fn.executable("python3") > 0 then
 end
 
 vim.g.undotree_SetFocusWhenToggle = 1
+
+vim.opt.showtabline = 0
+
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "lua",
+  callback = function()
+    vim.opt_local.expandtab = true     -- convert tabs to spaces
+    vim.opt_local.shiftwidth = 2       -- indentation size
+    vim.opt_local.tabstop = 2          -- how many spaces a tab counts for
+    vim.opt_local.softtabstop = 2
+  end,
+})

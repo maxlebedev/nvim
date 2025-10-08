@@ -26,7 +26,7 @@ vim.keymap.set('v', '<Tab>', '>gv') -- >> with tab in vmode
 
 vim.keymap.set('n', 'U', '<Cmd>redo<Cr>')
 
--- vim.keymap.set('n', '<leader><BS>', '<C-o>', {desc="Return from a move"})
+vim.keymap.set('n', '<leader><BS>', ':b#<cr>', {desc="Return to prev file"})
 -- C-i and C-o navigate the split buffer stack
 
 vim.keymap.set('t', '<ESC>', '<C-\\><C-n>')

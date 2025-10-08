@@ -113,7 +113,7 @@ local plugins = {
   "glepnir/lspsaga.nvim",
   {
     'nvim-telescope/telescope.nvim',
-    tag = '0.1.0',
+    tag = '0.1.3',
     dependencies = { {'nvim-lua/plenary.nvim'} }
   },
   { -- Autocompletion
@@ -149,8 +149,32 @@ local plugins = {
   -- { "folke/edgy.nvim", event = "VeryLazy", opts = {} },
   "akinsho/toggleterm.nvim",
   "Wilfred/difftastic",
+  {
+    'b0o/incline.nvim',
+    config = function()
+      require('incline').setup({
+        window = {
+          padding = 0, -- remove darker color spots on sides
+        },
+        render = function(props)
+          local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ':t')
+          local modified = vim.bo[props.buf].modified
+          return {
+            ' ',
+            filename,
+            modified and { '[+]', gui = 'bold' } or '',
+            ' ',
+            guibg = '#161616',
+            guifg = '#1ee1ee',
+          }
+        end
+      }
+      )
+    end,
+    -- Optional: Lazy load Incline
+    event = 'VeryLazy',
+  },
 }
-
 
 local opts = {}
 
