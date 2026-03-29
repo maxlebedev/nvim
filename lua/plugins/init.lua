@@ -154,7 +154,9 @@ local plugins = {
     config = function()
       require('incline').setup({
         window = {
-          padding = 0, -- remove darker color spots on sides
+          padding = 0,
+          margin = { horizontal = 0 },
+          winhighlight = {guibg = '#161616'},
         },
         render = function(props)
           local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ':t')
