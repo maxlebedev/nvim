@@ -1,5 +1,7 @@
-local lspconfig = require('lspconfig')
-lspconfig.pyright.setup {}
+vim.lsp.enable('pyright')
+
+vim.lsp.enable('ruff')
+-- lspconfig.pyright.setup {}
 
 -- lspconfig.ruff.setup {}
 

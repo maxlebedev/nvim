@@ -20,10 +20,4 @@ local config = {
   },
 }
 
-require('data-viewer').setup {
-  opts = config,
-  dependencies = {
-    "nvim-lua/plenary.nvim",
-    "kkharji/sqlite.lua", -- Optional, sqlite support
-  }
-}
+require('data-viewer').setup(config)

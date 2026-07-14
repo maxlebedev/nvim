@@ -1,15 +1,13 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
-vim.o.path = "**"
+vim.opt.path:append("**")
 
 vim.opt.backspace = '2'
 vim.opt.laststatus = 2
 vim.opt.autowrite = true
 vim.opt.autoread = true
 
-vim.opt.lazyredraw = true
-vim.o.ttyfast = true
 vim.o.synmaxcol = 300
 
 -- use spaces for tabs and whatnot (does this work with python?)
@@ -25,7 +23,7 @@ vim.o.list = true
 vim.o.listchars = "tab:▸ ,trail:·,nbsp:␣"
 
 --Line numbers
-vim.wo.number = true
+vim.wo.number = false
 
 -- Mouse off
 vim.o.mouse = ""
@@ -61,13 +59,16 @@ vim.cmd.highlight({"Search", "guibg=DimGrey", "guifg=NONE"})
 vim.diagnostic.config({
   virtual_text = false,
   float = true,
+  signs = false,  -- explicit false; omitting it defaults to true → shows built-in E/W/I/H letters
+  -- arrows disabled — diagnostics conveyed via underline only. Re-enable by uncommenting.
+  --[[
   signs = {
     text = {
       -- https://github.com/neovim/neovim/commit/8122470f8310ae34bcd5e436e8474f9255eb16f2
-      [vim.diagnostic.severity.ERROR] = " ",
-      [vim.diagnostic.severity.WARN] = " ",
-      [vim.diagnostic.severity.INFO] = " ",
-      [vim.diagnostic.severity.HINT] = " ",
+      [vim.diagnostic.severity.ERROR] = "->",
+      [vim.diagnostic.severity.WARN] = "->",
+      [vim.diagnostic.severity.INFO] = "->",
+      [vim.diagnostic.severity.HINT] = "->",
     },
     numhl = {
       [vim.diagnostic.severity.ERROR] = "DiagnosticError",
@@ -76,15 +77,38 @@ vim.diagnostic.config({
       [vim.diagnostic.severity.HINT] = "DiagnosticHint",
     }
   }
+  --]]
 })
 vim.opt.signcolumn = "number"
 -- vim.cmd.highlight({"DiagnosticError", "cterm=bold", "gui=bold", "guifg=#2a2d25", "guibg=#f18e91"})
 -- vim.cmd.highlight({"DiagnosticWarn", "cterm=bold", "gui=bold", "guifg=#2a2d25", "guibg=Orange"})
 -- DagnosticSignError for highlighted bg, no "sign" for no bg
-vim.fn.sign_define("DiagnosticSignError", { numhl = "DiagnosticError"})
-vim.fn.sign_define("DiagnosticSignWarn", { numhl = "DiagnosticWarn"})
-vim.fn.sign_define("DiagnosticSignHint", { numhl = "DiagnosticHint"})
-vim.fn.sign_define("DiagnosticSignInfo", { numhl = "DiagnosticInfo"})
+-- Dead while `signs = false` (numhl-only signs never render). Kept for re-enabling.
+-- vim.fn.sign_define("DiagnosticSignError", { numhl = "DiagnosticError"})
+-- vim.fn.sign_define("DiagnosticSignWarn", { numhl = "DiagnosticWarn"})
+-- vim.fn.sign_define("DiagnosticSignHint", { numhl = "DiagnosticHint"})
+-- vim.fn.sign_define("DiagnosticSignInfo", { numhl = "DiagnosticInfo"})
+
+-- Color the diagnostic underline via `sp` (the squiggle) instead of `fg` (the
+-- text), so underlined code keeps its syntax color. Re-applied on ColorScheme
+-- because oxocarbon sets these with `fg` and runs `hi clear` when it loads.
+local function diagnostic_underline_sp()
+  for _, group in ipairs({
+    "DiagnosticUnderlineError",
+    "DiagnosticUnderlineWarn",
+    "DiagnosticUnderlineInfo",
+    "DiagnosticUnderlineHint",
+  }) do
+    local hl = vim.api.nvim_get_hl(0, { name = group, link = false })
+    if hl.fg then
+      hl.sp = hl.fg
+      hl.fg = nil
+      vim.api.nvim_set_hl(0, group, hl)
+    end
+  end
+end
+vim.api.nvim_create_autocmd("ColorScheme", { callback = diagnostic_underline_sp })
+diagnostic_underline_sp()
 
 
 -- TODO: error/warn info can be conveyed via color alone
@@ -107,7 +131,6 @@ vim.g.undotree_SetFocusWhenToggle = 1
 
 vim.opt.showtabline = 0
 
-
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "lua",
   callback = function()
@@ -117,3 +140,9 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.softtabstop = 2
   end,
 })
+
+vim.api.nvim_create_autocmd("BufWritePost", { pattern = "*.py",
+  command = "silent! !ruff check --fix % && ruff format %",
+})
+
+vim.opt.timeoutlen = 300

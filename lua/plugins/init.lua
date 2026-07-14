@@ -39,7 +39,6 @@ local plugins = {
   'nvim-tree/nvim-web-devicons',
   'nvim-lualine/lualine.nvim',
 
-  'nvim-treesitter/nvim-treesitter',
   -- 'vim-test/vim-test',
   { -- Adds git releated signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -78,15 +77,16 @@ local plugins = {
   'tpope/vim-commentary',
   'tpope/vim-obsession',
 
-  { -- Highlight, edit, and navigate code
-    'nvim-treesitter/nvim-treesitter',
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter-textobjects',
-    },
-    config = function()
-      pcall(require('nvim-treesitter.install').update { with_sync = true })
-    end,
-  },
+
+  -- { -- Highlight, edit, and navigate code
+  --   'nvim-treesitter/nvim-treesitter',
+  --   dependencies = {
+  --     'nvim-treesitter/nvim-treesitter-textobjects',
+  --   },
+  --   config = function()
+  --     pcall(require('nvim-treesitter.install').update { with_sync = true })
+  --   end,
+  -- },
 
 
   -- rust babyyyyyyy
@@ -95,7 +95,6 @@ local plugins = {
   'simrat39/rust-tools.nvim',
 
   -- completion
-  'hrsh7th/nvim-cmp',
   'hrsh7th/cmp-nvim-lsp',
   { "williamboman/mason.nvim", opts = {} },
   {
@@ -110,7 +109,6 @@ local plugins = {
     },
   },
   "williamboman/mason-lspconfig.nvim",
-  "glepnir/lspsaga.nvim",
   {
     'nvim-telescope/telescope.nvim',
     tag = '0.1.3',
@@ -123,7 +121,6 @@ local plugins = {
   { 'folke/which-key.nvim', opts = { preset = "classic", } },
   {
     'vidocqh/data-viewer.nvim',
-    opts = {},
     dependencies = {
       "nvim-lua/plenary.nvim",
       "kkharji/sqlite.lua", -- Optional, sqlite support
@@ -182,9 +179,12 @@ local opts = {}
 
 require("lazy").setup(plugins, opts)
 
-require('hologram').setup{
-    -- auto_display = true -- WIP automatic markdown image display, may be prone to breaking
-}
+-- hologram can't get screen size without a real UI (headless → E5113), so skip it there
+if #vim.api.nvim_list_uis() > 0 then
+  require('hologram').setup{
+      -- auto_display = true -- WIP automatic markdown image display, may be prone to breaking
+  }
+end
 require('mini.surround').setup({
 -- saiw - surround add inside word
 })
@@ -194,7 +194,6 @@ require('oil').setup({
 
 -- require("plugins.telescope")
 require("plugins.mason")
-require("plugins.nvim-treesitter")
 require("plugins.lualine")
 require("plugins.nvim-cmp")
 require("plugins.mason-lspconfig")
@@ -212,3 +211,4 @@ require("toggleterm").setup{
   direction = "float",
   size = vim.o.columns * 0.3,
 }
+

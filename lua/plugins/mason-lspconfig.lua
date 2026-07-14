@@ -7,6 +7,7 @@ local servers = {
   -- ruff = {},
   rust_analyzer = {},
   -- tsserver = {},
+  vtsls = {},
 
   lua_ls = {
     Lua = {

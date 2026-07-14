@@ -52,14 +52,14 @@ WinSwap = function()
     if swap_buf == -1 then
       swap_buf = vim.api.nvim_get_current_buf()
       swap_win = vim.api.nvim_get_current_win()
-      print("SwapBuf set")
+      vim.notify("SwapBuf set", vim.log.levels.INFO)
     else
       local tmpBuf = vim.api.nvim_get_current_buf()
       vim.api.nvim_set_current_buf(swap_buf)
       vim.api.nvim_win_set_buf(swap_win, tmpBuf)
       swap_buf = -1
       swap_win = -1
-      print("SwapBuf unset")
+      vim.notify("SwapBuf unset", vim.log.levels.INFO)
     end
   end
 end
@@ -79,3 +79,5 @@ vim.keymap.set('v', "<leader>s", [[:s/\([A-Z]\)/_\l\1/g]], {desc='camelCase to s
 vim.keymap.set('n', "<leader>dbg", [[iprint(f"{=}")<ESC>3hi]], {desc='debug print'})
 
 vim.keymap.set('n', "<leader>o", "<cmd>Outline<CR>", {desc="Toggle outline"})
+
+vim.keymap.set("c", "<C-a>", "<Home>")
