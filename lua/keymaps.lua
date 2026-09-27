@@ -23,7 +23,7 @@ vim.keymap.set('i', '<S-Tab>', '<C-d>') -- outdents in insert mode
 
 vim.keymap.set('v', '<S-Tab>', '<gv')
 vim.keymap.set('v', '<Tab>', '>gv') -- >> with tab in vmode
- j
+
 vim.keymap.set('n', 'U', '<Cmd>redo<Cr>')
 
 vim.keymap.set('n', '<leader><BS>', ':b#<cr>', {desc="Return to prev file"})
