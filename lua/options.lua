@@ -110,6 +110,15 @@ end
 vim.api.nvim_create_autocmd("ColorScheme", { callback = diagnostic_underline_sp })
 diagnostic_underline_sp()
 
+-- Split borders: oxocarbon's base01 (#2a2a2a) barely reads against the black
+-- bg. Bump to base02 (#404040), the next rung in its own palette. Autocmd
+-- because the colorscheme loads after options and runs `hi clear`.
+local function lighten_win_separator()
+  vim.api.nvim_set_hl(0, "WinSeparator", { fg = "#404040", bg = "#161616" })
+end
+vim.api.nvim_create_autocmd("ColorScheme", { callback = lighten_win_separator })
+lighten_win_separator()
+
 
 -- TODO: error/warn info can be conveyed via color alone
 -- git bg too, but they gotta look different. Maybe erros get bg and git gets fg?
@@ -146,3 +155,26 @@ vim.api.nvim_create_autocmd("BufWritePost", { pattern = "*.py",
 })
 
 vim.opt.timeoutlen = 300
+
+-- Persistent terminals with zero ceremony: a bare `:te` runs `zmx attach <name>`
+-- instead of a child shell, so the session outlives an nvim restart (zmx keeps it
+-- alive in a detached daemon) and Obsession restores it into the same split. The
+-- name (nvim-<cwd>-<winid>) is auto-derived so you never type one, and it's frozen
+-- into the session file, so on restore Obsession reruns it verbatim to reconnect.
+-- Needs zmx on PATH (brew install neurosnap/tap/zmx). Escape hatch: `:term` /
+-- `:terminal <cmd>` stay vanilla, e.g. `:terminal htop` runs a throwaway.
+vim.cmd([[cnoreabbrev <expr> te (getcmdtype() ==# ':' && getcmdline() ==# 'te') ? ('te zmx attach nvim-' . fnamemodify(getcwd(), ':t') . '-' . win_getid()) : 'te']])
+
+-- Closing a zmx terminal window (:q) kills its daemon so it doesn't linger.
+-- WinClosed fires only when a window leaves the layout while nvim keeps running,
+-- so it never fires on nvim exit -- `:qa`, or `:q` on the last window (verified,
+-- per :h WinClosed) -- leaving the daemons alive to be restored on next session.
+-- `exit` in the shell ends a daemon on its own.
+vim.api.nvim_create_autocmd('WinClosed', {
+  callback = function(ev)
+    local ok, buf = pcall(vim.api.nvim_win_get_buf, tonumber(ev.match))
+    if not ok then return end
+    local name = vim.api.nvim_buf_get_name(buf):match('zmx attach (%S+)')
+    if name then vim.fn.jobstart({ 'zmx', 'kill', name }) end
+  end,
+})

@@ -19,17 +19,18 @@ vim.keymap.set('n', '<S-Right>', '<c-w>L')
 vim.keymap.set('n', '<leader>j', 'gT')
 vim.keymap.set('n', '<leader>;', 'gt')
 
-vim.keymap.set('i', '<S-Tab>', '<C-d>') -- untabs in insert mode
+vim.keymap.set('i', '<S-Tab>', '<C-d>') -- outdents in insert mode
 
 vim.keymap.set('v', '<S-Tab>', '<gv')
 vim.keymap.set('v', '<Tab>', '>gv') -- >> with tab in vmode
-
+ j
 vim.keymap.set('n', 'U', '<Cmd>redo<Cr>')
 
 vim.keymap.set('n', '<leader><BS>', ':b#<cr>', {desc="Return to prev file"})
 -- C-i and C-o navigate the split buffer stack
 
 vim.keymap.set('t', '<ESC>', '<C-\\><C-n>')
+vim.keymap.set('t', '<S-ESC>', '<ESC>', {desc="send literal ESC to the terminal job"})
 
 -- is this a different goto def than the builtin?
 vim.keymap.set('n', 'gD', '<C-w>]', {desc="[G]oto [D]efinition"})
