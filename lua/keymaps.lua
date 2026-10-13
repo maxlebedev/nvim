@@ -35,6 +35,27 @@ vim.keymap.set('t', '<S-ESC>', '<ESC>', {desc="send literal ESC to the terminal 
 -- is this a different goto def than the builtin?
 vim.keymap.set('n', 'gD', '<C-w>]', {desc="[G]oto [D]efinition"})
 
+local function goto_clipboard_def(split)
+  local name = vim.trim(vim.fn.getreg('+'))
+  local root = vim.fs.root(0, '.git') or vim.fn.getcwd()
+  local pat = string.format([[^\s*(class|def|async def)\s+%s\b|^%s\s*(:[^=]*)?=]], name, name)
+  local hits = vim.fn.systemlist({'rg', '--vimgrep', '-t', 'py', pat, root})
+  if #hits == 0 then
+    vim.notify('No definition found: ' .. name, vim.log.levels.WARN)
+  elseif #hits == 1 then
+    local file, lnum, col = hits[1]:match('^(.-):(%d+):(%d+):')
+    vim.cmd("normal! m'")
+    vim.cmd[split and 'split' or 'edit'](vim.fn.fnameescape(file))
+    vim.api.nvim_win_set_cursor(0, {tonumber(lnum), tonumber(col) - 1})
+  else
+    vim.fn.setqflist({}, ' ', {title = 'def ' .. name, lines = hits, efm = '%f:%l:%c:%m'})
+    vim.cmd.copen()
+  end
+end
+
+vim.keymap.set('n', 'gp', function() goto_clipboard_def(false) end, {desc="[G]oto clipboard definition"})
+vim.keymap.set('n', 'gP', function() goto_clipboard_def(true) end, {desc="[G]oto clipboard definition in split"})
+
 -- vim.keymap.set('i', '<S-Tab>', vim.diagnostic.open_float)
 
 vim.keymap.set('n', 'gF', '<C-w><C-f>', {desc="[G]oto [F]ile in split"})
