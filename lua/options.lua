@@ -159,11 +159,19 @@ vim.opt.timeoutlen = 300
 -- Persistent terminals with zero ceremony: a bare `:te` runs `zmx attach <name>`
 -- instead of a child shell, so the session outlives an nvim restart (zmx keeps it
 -- alive in a detached daemon) and Obsession restores it into the same split. The
--- name (nvim-<cwd>-<winid>) is auto-derived so you never type one, and it's frozen
+-- name (nvim-<cwd>-<epoch>) is auto-derived so you never type one, and it's frozen
 -- into the session file, so on restore Obsession reruns it verbatim to reconnect.
+-- Also fires after a bar (`sp | te`). Not winid: the abbrev expands before the
+-- split runs, so winid would be the *source* window and could collide.
 -- Needs zmx on PATH (brew install neurosnap/tap/zmx). Escape hatch: `:term` /
 -- `:terminal <cmd>` stay vanilla, e.g. `:terminal htop` runs a throwaway.
-vim.cmd([[cnoreabbrev <expr> te (getcmdtype() ==# ':' && getcmdline() ==# 'te') ? ('te zmx attach nvim-' . fnamemodify(getcwd(), ':t') . '-' . win_getid()) : 'te']])
+vim.keymap.set('ca', 'te', function()
+  local line = vim.fn.getcmdline()
+  if vim.fn.getcmdtype() ~= ':' or not (line:match('^%s*te$') or line:match('|%s*te$')) then
+    return 'te'
+  end
+  return 'te zmx attach nvim-' .. vim.fn.fnamemodify(vim.fn.getcwd(), ':t') .. '-' .. os.time()
+end, { expr = true })
 
 -- Closing a zmx terminal window (:q) kills its daemon so it doesn't linger.
 -- WinClosed fires only when a window leaves the layout while nvim keeps running,

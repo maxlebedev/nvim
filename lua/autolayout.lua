@@ -4,9 +4,12 @@
 -- with nvim_win_set_config, not recreated, so buffers/cursors/jumplists survive.
 -- Width is the only signal, so dragging nvim between screens behaves the same
 -- as plugging/unplugging.
+-- The stacked layout is recognized by shape (4 left, 2 right), not remembered,
+-- so it still restores after a restart or session load done on the laptop.
 local NARROW_COLS = 180 -- laptop screen is 177; monitors are wider
 
-local saved = {} -- tabpage -> { L1, L2, C1, C2, R1, R2 } while stacked
+local pending = {} -- tabpage -> true: restore to 3x2 next time it's current and wide
+local was_narrow -- nil until the first event
 
 -- The tab's layout as a list of columns of window ids, or nil if it isn't a
 -- plain row of columns.
@@ -31,22 +34,28 @@ local function move(win, target, dir)
   vim.api.nvim_win_set_config(win, { win = target, split = dir })
 end
 
-local function apply()
+local function apply(ev)
+  local narrow = vim.o.columns <= NARROW_COLS
+  -- Coming up wide (startup, session load, plugging the monitor in): any tab may
+  -- be sitting in the stacked layout, so flag them all. TabEnter restores the rest.
+  if not narrow and (was_narrow ~= false or ev.event == "SessionLoadPost") then
+    for _, t in ipairs(vim.api.nvim_list_tabpages()) do pending[t] = true end
+  end
+  was_narrow = narrow
+
   local tab = vim.api.nvim_get_current_tabpage()
   local c = columns(tab)
   if not c then return end
-  local narrow = vim.o.columns <= NARROW_COLS
 
   if narrow and #c == 3 and #c[1] == 2 and #c[2] == 2 and #c[3] == 2 then
-    local L1, L2, C1, C2, R1, R2 = c[1][1], c[1][2], c[2][1], c[2][2], c[3][1], c[3][2]
+    local L1, L2, C1, C2 = c[1][1], c[1][2], c[2][1], c[2][2]
     move(C1, L1, "below")
     move(C2, L2, "below")
-    saved[tab] = { L1, L2, C1, C2, R1, R2 }
-  elseif not narrow and saved[tab] then
-    local L1, L2, C1, C2, R1, R2 = unpack(saved[tab])
-    saved[tab] = nil
-    -- Layout was rearranged by hand while stacked; leave it alone.
-    if not vim.deep_equal(c, { { L1, C1, L2, C2 }, { R1, R2 } }) then return end
+  elseif not narrow and pending[tab] then
+    pending[tab] = nil
+    if not (#c == 2 and #c[1] == 4 and #c[2] == 2) then return end
+    local L1, C1, L2, C2 = unpack(c[1])
+    local R1, R2 = unpack(c[2])
     move(C1, -1, "right")
     move(C2, C1, "below")
     move(R1, -1, "right")
