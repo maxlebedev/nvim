@@ -181,6 +181,10 @@ local plugins = {
           winhighlight = {guibg = '#161616'},
         },
         render = function(props)
+          local csvview = package.loaded.csvview
+          if csvview and csvview.is_enabled(props.buf) then
+            return nil
+          end
           local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ':t')
           local modified = vim.bo[props.buf].modified
           return {
