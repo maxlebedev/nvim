@@ -127,6 +127,31 @@ local plugins = {
     }
   },
   {
+    'hat0uma/csvview.nvim',
+    opts = {
+      view = { display_mode = "border" },
+      keymaps = { -- Kinesis: j=left cell, ;=right cell
+        jump_prev_field_start = { "j", mode = { "n", "v" } },
+        jump_next_field_start = { ";", mode = { "n", "v" } },
+      },
+    },
+    cmd = { 'CsvViewEnable', 'CsvViewDisable', 'CsvViewToggle' },
+    init = function()
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "csv", "tsv" },
+        command = "CsvViewEnable",
+      })
+      local function link_column_colors()
+        for col = 0, 8 do
+          local color = "DataViewerColumn" .. col % 3
+          vim.api.nvim_set_hl(0, "CsvViewCol" .. col, { link = color })
+        end
+      end
+      link_column_colors()
+      vim.api.nvim_create_autocmd("ColorScheme", { callback = link_column_colors })
+    end,
+  },
+  {
     'stevearc/oil.nvim',
     opts = {},
     -- Optional dependencies

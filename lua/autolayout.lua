@@ -73,3 +73,23 @@ vim.api.nvim_create_autocmd({ "VimResized", "TabEnter", "VimEnter", "SessionLoad
   group = vim.api.nvim_create_augroup("autolayout", {}),
   callback = apply,
 })
+
+-- IDEA (parked): generalize past the one 3x2 <-> 4+2 case.
+-- Fold: target = floor(vim.o.columns / MIN_COL_WIDTH) columns; merge adjacent
+-- columns down to that, interleaving rows so windows keep their row position
+-- (4 -> (1+2)(3+4), 3 -> (1+2)(3), 4 -> 3 is (1+2)(3)(4)). Covers widths
+-- between laptop and monitor too.
+-- Restore is the hard half -- a stacked shape is ambiguous (4+2 could be a
+-- folded 2,2,2 or a deliberate 4+2):
+--   A. Uniform-grid assumption: k = shortest column's height, any column of
+--      m*k windows splits back into m. Stateless, so survives restart/session
+--      load (the property the shape-based restore was for). Non-uniform
+--      layouts like 1,2,2 just never fold.
+--   B. Record the original column counts as metadata (a g: var persists in
+--      sessions with 'globals' in sessionoptions). Handles any shape, but
+--      winids change across restarts, so it'd key on tab number / buffer
+--      names, which can drift.
+-- Named layouts (`:Layout save <name>` / `:Layout <name>`) would sit on the
+-- same "arrange these windows into this column structure" core.
+-- Open question: which layouts besides 3x2 are actually in use? All uniform
+-- grids -> A (~30 lines). Uneven ones -> B or named layouts.
