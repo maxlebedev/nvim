@@ -141,7 +141,7 @@ vim.g.undotree_SetFocusWhenToggle = 1
 vim.opt.showtabline = 0
 
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = "lua",
+  pattern = { "lua", "html", "css", "javascript" },
   callback = function()
     vim.opt_local.expandtab = true     -- convert tabs to spaces
     vim.opt_local.shiftwidth = 2       -- indentation size
